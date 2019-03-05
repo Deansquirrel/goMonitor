@@ -16,3 +16,10 @@ description="goMonitor"
 [dingTalkConfig]
 # DingTalk 服务地址
 address="http://123.57.70.114:10001"
+
+[configDBConfig]
+server=""
+port=1433
+dbName=""
+user=""
+pwd=""
