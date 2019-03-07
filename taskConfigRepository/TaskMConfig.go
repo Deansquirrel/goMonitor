@@ -8,7 +8,11 @@ import (
 )
 
 const SqlGetTaskMConfig = "" +
-	"SELECT [FID],[FTitle],[FRemark] FROM [MConfig]"
+	"SELECT [FID],[FTitle],[FRemark] " +
+	"FROM [MConfig]"
+const SqlGetTaskMConfigById = "" +
+	"SELECT [FID],[FTitle],[FRemark] " +
+	"FROM [MConfig] WHERE [FID] = ?"
 
 type TaskMConfig struct {
 }
@@ -28,7 +32,15 @@ func NewTaskMConfig(title string, remark string) *taskMConfigData {
 }
 
 func (tmc *TaskMConfig) GetMConfigList() ([]taskMConfigData, error) {
-	rows, err := getRowsBySQL(SqlGetTaskMConfig)
+	rows, err := comm.getRowsBySQL(SqlGetTaskMConfig)
+	if err != nil {
+		return nil, err
+	}
+	return tmc.getMConfigListByRows(rows)
+}
+
+func (tmc *TaskMConfig) GetMConfig(id string) ([]taskMConfigData, error) {
+	rows, err := comm.getRowsBySQL(SqlGetTaskMConfigById, id)
 	if err != nil {
 		return nil, err
 	}

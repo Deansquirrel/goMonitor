@@ -6,8 +6,17 @@ import (
 	"github.com/Deansquirrel/goToolMSSql"
 )
 
+var comm common
+
+func init() {
+	comm = common{}
+}
+
+type common struct {
+}
+
 //获取配置库连接配置
-func getConfigDBConfig() *goToolMSSql.MSSqlConfig {
+func (c *common) getConfigDBConfig() *goToolMSSql.MSSqlConfig {
 	return &goToolMSSql.MSSqlConfig{
 		Server: global.SysConfig.ConfigDBConfig.Server,
 		Port:   global.SysConfig.ConfigDBConfig.Port,
@@ -17,8 +26,8 @@ func getConfigDBConfig() *goToolMSSql.MSSqlConfig {
 	}
 }
 
-func getRowsBySQL(sql string, args ...interface{}) (*sql.Rows, error) {
-	conn, err := goToolMSSql.GetConn(getConfigDBConfig())
+func (c *common) getRowsBySQL(sql string, args ...interface{}) (*sql.Rows, error) {
+	conn, err := goToolMSSql.GetConn(c.getConfigDBConfig())
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +38,7 @@ func getRowsBySQL(sql string, args ...interface{}) (*sql.Rows, error) {
 		}
 		return rows, nil
 	} else {
-		rows, err := conn.Query(sql, args)
+		rows, err := conn.Query(sql, args...)
 		if err != nil {
 			return nil, err
 		}

@@ -3,7 +3,6 @@ package service
 import (
 	"github.com/Deansquirrel/goMonitor/global"
 	"github.com/Deansquirrel/goMonitor/notify"
-	"github.com/Deansquirrel/goMonitor/taskConfigRepository"
 	"os"
 	"os/signal"
 	"syscall"
@@ -48,18 +47,6 @@ func (cs *cronService) start() {
 		case <-global.Ctx.Done():
 		}
 	}()
-
-	tmc := taskConfigRepository.TaskMConfig{}
-	list, err := tmc.GetMConfigList()
-	if err != nil {
-		log.Debug(err.Error())
-	} else {
-		for _, config := range list {
-			log.Debug(config.FId)
-			log.Debug(config.FTitle)
-			log.Debug(config.FRemark)
-		}
-	}
 }
 
 //测试消息发送
