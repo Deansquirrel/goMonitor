@@ -2,17 +2,11 @@ package service
 
 import (
 	"github.com/Deansquirrel/goMonitor/global"
-	"github.com/Deansquirrel/goMonitor/notify"
 	"os"
 	"os/signal"
 	"syscall"
 )
 import log "github.com/Deansquirrel/goToolLog"
-
-const (
-	//测试WebHookKey
-	TestWebHookKey = "7a84d09b83f9633ad37866505d2c0c26e39f4fa916b3af8f6a702180d3b9906b"
-)
 
 type cronService struct {
 }
@@ -47,24 +41,40 @@ func (cs *cronService) start() {
 		case <-global.Ctx.Done():
 		}
 	}()
+	err := intTask.StartTask()
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	//time.AfterFunc(time.Minute,func(){
+	//	_ = intTask.StopJob("7235F3B3-E258-4548-9A14-A6B1313B0B49")
+	//})
+	//
+	//time.AfterFunc(time.Minute * 2,func(){
+	//	_ = intTask.StartJob("7235F3B3-E258-4548-9A14-A6B1313B0B49")
+	//})
+
+	cs.test()
 }
 
 //测试消息发送
 func (cs *cronService) test() {
-	dt := notify.NewDingTalkRobot(global.SysConfig.DingTalkConfig.Address)
-	var err error
-	err = dt.SendTextMsg(TestWebHookKey, "normal msg")
-	if err != nil {
-		log.Debug("ERR:" + err.Error())
-	}
-	atList := make([]string, 0)
-	atList = append(atList, "15298386821")
-	err = dt.SendTextMsgWithAtList(TestWebHookKey, "at msg", atList)
-	if err != nil {
-		log.Debug(err.Error())
-	}
-	err = dt.SendTextMsgWithAtAll(TestWebHookKey, "at all msg")
-	if err != nil {
-		log.Debug(err.Error())
-	}
+	//i := 0
+	//c := cron.New()
+	//spec := "0/1 * * * * ?"
+	//_ = c.AddFunc(spec,func(){
+	//	i++
+	//	log.Debug(fmt.Sprintf("cron running:%d",i))
+	//	for _,j := range c.Entries(){
+	//		log.Debug(goToolCommon.GetDateTimeStr(j.Prev))
+	//		log.Debug(goToolCommon.GetDateTimeStr(j.Next))
+	//	}
+	//})
+	//time.AfterFunc(time.Second * 5,func(){
+	//	c.Stop()
+	//})
+	//time.AfterFunc(time.Second * 10,func(){
+	//	c.Start()
+	//})
+	//c.Start()
 }

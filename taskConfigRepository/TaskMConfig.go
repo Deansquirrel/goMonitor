@@ -2,9 +2,7 @@ package taskConfigRepository
 
 import (
 	"database/sql"
-	"github.com/Deansquirrel/goToolCommon"
 	log "github.com/Deansquirrel/goToolLog"
-	"strings"
 )
 
 const SqlGetTaskMConfig = "" +
@@ -23,15 +21,15 @@ type taskMConfigData struct {
 	FRemark string
 }
 
-func NewTaskMConfig(title string, remark string) *taskMConfigData {
-	return &taskMConfigData{
-		FId:     strings.ToUpper(goToolCommon.Guid()),
-		FTitle:  title,
-		FRemark: remark,
-	}
-}
+//func NewTaskMConfig(title string, remark string) *taskMConfigData {
+//	return &taskMConfigData{
+//		FId:     strings.ToUpper(goToolCommon.Guid()),
+//		FTitle:  title,
+//		FRemark: remark,
+//	}
+//}
 
-func (tmc *TaskMConfig) GetMConfigList() ([]taskMConfigData, error) {
+func (tmc *TaskMConfig) GetMConfigList() ([]*taskMConfigData, error) {
 	rows, err := comm.getRowsBySQL(SqlGetTaskMConfig)
 	if err != nil {
 		return nil, err
@@ -39,7 +37,7 @@ func (tmc *TaskMConfig) GetMConfigList() ([]taskMConfigData, error) {
 	return tmc.getMConfigListByRows(rows)
 }
 
-func (tmc *TaskMConfig) GetMConfig(id string) ([]taskMConfigData, error) {
+func (tmc *TaskMConfig) GetMConfig(id string) ([]*taskMConfigData, error) {
 	rows, err := comm.getRowsBySQL(SqlGetTaskMConfigById, id)
 	if err != nil {
 		return nil, err
@@ -47,7 +45,7 @@ func (tmc *TaskMConfig) GetMConfig(id string) ([]taskMConfigData, error) {
 	return tmc.getMConfigListByRows(rows)
 }
 
-func (tmc *TaskMConfig) getMConfigListByRows(rows *sql.Rows) ([]taskMConfigData, error) {
+func (tmc *TaskMConfig) getMConfigListByRows(rows *sql.Rows) ([]*taskMConfigData, error) {
 	defer func() {
 		errLs := rows.Close()
 		if errLs != nil {
@@ -55,7 +53,7 @@ func (tmc *TaskMConfig) getMConfigListByRows(rows *sql.Rows) ([]taskMConfigData,
 		}
 	}()
 	var fId, fTitle, fRemark string
-	resultList := make([]taskMConfigData, 0)
+	resultList := make([]*taskMConfigData, 0)
 	for rows.Next() {
 		err := rows.Scan(&fId, &fTitle, &fRemark)
 		if err != nil {
@@ -66,7 +64,7 @@ func (tmc *TaskMConfig) getMConfigListByRows(rows *sql.Rows) ([]taskMConfigData,
 			FTitle:  fTitle,
 			FRemark: fRemark,
 		}
-		resultList = append(resultList, config)
+		resultList = append(resultList, &config)
 	}
 	return resultList, nil
 }
