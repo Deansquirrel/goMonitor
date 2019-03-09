@@ -36,19 +36,26 @@ func (iw *intWorker) Run() {
 	list := make([]int, 0)
 	var num int
 	for rows.Next() {
-		err := rows.Scan(&num)
+		err = rows.Scan(&num)
 		if err != nil {
-			comm.sendMsg(iw.intTaskConfigData.FId, comm.getMsg(iw.intTaskConfigData.FMsgTitle, err.Error()))
-			return
+			break
 		} else {
 			list = append(list, num)
 		}
 	}
+	if err != nil {
+		log.Debug(err.Error())
+		_ = rows.Close()
+		comm.sendMsg(iw.intTaskConfigData.FId, comm.getMsg(iw.intTaskConfigData.FMsgTitle, err.Error()))
+		return
+	}
+
 	if len(list) != 1 {
 		comm.sendMsg(iw.intTaskConfigData.FId, comm.getMsg(iw.intTaskConfigData.FMsgTitle, fmt.Sprintf("SQL返回数量异常，exp:1,act:%d", len(list))))
 		return
 	}
 	num = list[0]
+	log.Debug("num " + strconv.Itoa(num))
 	if num > iw.intTaskConfigData.FCheckMax || num < iw.intTaskConfigData.FCheckMin {
 		comm.sendMsg(iw.intTaskConfigData.FId, comm.getMsg(iw.intTaskConfigData.FMsgTitle, strings.Replace(iw.intTaskConfigData.FMsgContent, "title", strconv.Itoa(num), -1)))
 	}
@@ -67,13 +74,17 @@ func (iw *intWorker) getDBConfig() *goToolMSSql.MSSqlConfig {
 
 //查询数据
 func (iw *intWorker) getRowsBySQL(sql string) (*sql.Rows, error) {
+	log.Debug("Get conn")
 	conn, err := goToolMSSql.GetConn(iw.getDBConfig())
 	if err != nil {
 		return nil, err
 	}
+	log.Debug("query")
 	rows, err := conn.Query(sql)
 	if err != nil {
+		log.Debug(err.Error())
 		return nil, err
 	}
+	log.Debug("return data")
 	return rows, nil
 }

@@ -3,6 +3,8 @@ package global
 import (
 	"context"
 	"github.com/Deansquirrel/goMonitor/config"
+	"github.com/Deansquirrel/goToolMSSql"
+	"time"
 )
 
 const (
@@ -14,3 +16,9 @@ const (
 var SysConfig *config.SysConfig
 var Ctx context.Context
 var Cancel func()
+
+func init() {
+	goToolMSSql.SetMaxIdleConn(3)
+	goToolMSSql.SetMaxOpenConn(3)
+	goToolMSSql.SetMaxLifetime(time.Second * 15)
+}

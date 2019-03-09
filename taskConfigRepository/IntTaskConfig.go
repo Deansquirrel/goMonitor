@@ -2,7 +2,6 @@ package taskConfigRepository
 
 import (
 	"database/sql"
-	log "github.com/Deansquirrel/goToolLog"
 )
 
 const SqlGetIntTaskConfig = "" +
@@ -111,12 +110,6 @@ func (itc *IntTaskConfig) GetIntTaskConfig(id string) ([]*IntTaskConfigData, err
 }
 
 func (itc *IntTaskConfig) getIntTaskConfigListByRows(rows *sql.Rows) ([]*IntTaskConfigData, error) {
-	defer func() {
-		errLs := rows.Close()
-		if errLs != nil {
-			log.Error(errLs.Error())
-		}
-	}()
 	var fId, fServer, fDbName, fDbUser, fDbPwd, fSearch, fCron, fMsgTitle, fMsgContent string
 	var fPort, fCheckMax, fCheckMin int
 	resultList := make([]*IntTaskConfigData, 0)
